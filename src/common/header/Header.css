@@ -1,7 +1,7 @@
 .Header {
     background-color: #222;
     height: 36px;
-    padding: 8px 32px 8px 16px; 
+    padding: 8px 32px 8px 16px;
 }
 
 .Logo {
@@ -10,13 +10,14 @@
     float: left;
     animation: rotation infinite 8s linear;
 }
-@keyframes rotation{
-    from{
-      transform:rotate(0deg);
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
     }
-    
-    to{
-      transform:rotate(360deg);
+
+    to {
+        transform: rotate(360deg);
     }
 }
 
@@ -25,7 +26,8 @@
 }
 
 .tab-style {
-    padding:2;
-    align-items: center;
-    display: inline-flex;
+    padding: 2;
+    text-align: center;
+    display: grid;
+    grid-template-columns: 100%;
 }
