@@ -23,3 +23,9 @@
 .Button-style {
     float: right;
 }
+
+.tab-style {
+    padding:2;
+    align-items: center;
+    display: inline-flex;
+}
