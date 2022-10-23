@@ -28,6 +28,10 @@ const Header = (props) => {
     const [reqPassword, setReqPassword] = useState("dispNone");
     const [reqContactno, setReqContactno] = useState("dispNone");
     const [result, setResult] = useState("");
+    const [displayLoginButton, setDisplayLoginButton] = useState("block");
+    const [displayLogoutButton, setDisplayLogoutButton] = useState("none");
+    const [displayBookShowButton, setDisplayBookShowButton] = useState("none");
+
     const handleTabChange = (event, newTabIndex) => {
         setTabIndex(newTabIndex);
     };
@@ -36,6 +40,9 @@ const Header = (props) => {
         setShowLoginModal(true);
     }
     const logoutButtonHandler = () => {
+        setDisplayLogoutButton("none");
+        setDisplayBookShowButton("none");
+        setDisplayLoginButton("block");
         setShowLogoutModal(true);
     }
     const bookShowButtonHandler = () => {
@@ -48,7 +55,18 @@ const Header = (props) => {
         setPassword(event.target.value);
     }
 
-    const registButtonHandler = () => {
+    const signInButtonHandler = () => {
+        if (username === "" || password === "")
+            return;
+        else {
+            setShowLoginModal(false);
+            setDisplayLogoutButton("block");
+            setDisplayLoginButton("none");
+            setDisplayBookShowButton("block");
+        }
+
+    }
+    const registerButtonHandler = () => {
         firstname === "" ? setReqFirstname("dispBlock") : setReqFirstname("dispNone");
         lastname === "" ? setReqLastname("dispBlock") : setReqLastname("dispNone");
         email === "" ? setReqEmail("dispBlock") : setReqEmail("dispNone");
@@ -67,7 +85,7 @@ const Header = (props) => {
             <Button className="Button-style"
                 variant="contained"
                 onClick={loginButtonHandler}
-                color="default"
+                color="default" style={{ display: displayLoginButton }}
             >LOGIN </Button>
             <ReactModal
                 isOpen={showLoginModal}
@@ -102,6 +120,7 @@ const Header = (props) => {
                                 <Button
                                     variant="contained"
                                     color="primary"
+                                    onClick={signInButtonHandler}
                                 >LOGIN
                                 </Button>
                             </FormControl></div>
@@ -164,7 +183,7 @@ const Header = (props) => {
                                 <Button
                                     variant="contained"
                                     color="primary"
-                                    onClick={registButtonHandler}
+                                    onClick={registerButtonHandler}
                                 >REGISTER
                                 </Button>
                             </FormControl><br /><br />
@@ -176,24 +195,24 @@ const Header = (props) => {
             <Button className="Button-style"
                 variant="contained"
                 onClick={logoutButtonHandler}
-                color="default">LOGOUT </Button>
+                color="default" style={{ display: displayLogoutButton }}
+            >LOGOUT
+            </Button>
             <ReactModal
                 isOpen={showLogoutModal}
                 ariaHideApp={false}
-                contentLabel="Logout Modal"
-            >
+                contentLabel="Logout Modal">
             </ReactModal>
 
             <Button className="Button-style"
                 variant="contained"
                 onClick={bookShowButtonHandler}
-                color="primary"
-            >BOOK SHOW </Button>
+                color="primary" style={{ display: displayBookShowButton }}>BOOK SHOW
+            </Button>
             <ReactModal
                 isOpen={showBookShowModal}
                 ariaHideApp={false}
-                contentLabel="Book Show Modal"
-            >
+                contentLabel="Book Show Modal" >
             </ReactModal>
         </div>
     )
