@@ -1,3 +1,8 @@
+.home {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
 .sub-header {
     background-color: #ff9999;
     text-align: center;
@@ -22,21 +27,14 @@
     background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 70%, rgba(0, 0, 0, 0) 100%),
 }
 
-.home-body {
+.home-body-container {
     width: 100%;
     margin: 16px;
-    display: flex;
+    display: grid;
+    grid-template-columns: 76% 24%;
 }
 
-.grid-movies-left {
-    width: 76%;
-}
-
-.find-movies-right {
-    width: 24%;
-}
-
-.grid-list-posters {
-    height: 350px;
-    ;
+.poster-style {
+    height: 350px !important;
+    justify-content: space-around;
 }
