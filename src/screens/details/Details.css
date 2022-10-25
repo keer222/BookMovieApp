@@ -1,10 +1,11 @@
-.details-container {
-    display: grid;
-    grid-template-columns: 20% 60% 20%;
-}
-
 .back-home {
     cursor: pointer;
     margin: 8px 0px 0px 24px;
     height: 24px;
+}
+
+.details-container {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 20% 60% 20%;
 }

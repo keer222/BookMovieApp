@@ -1,11 +1,12 @@
 import { GridList, GridListTile, GridListTileBar, Card, MenuItem, FormControl, InputLabel, Input, Select, withStyles, Button, TextField, ListItemIcon } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Header from "../../common/header/Header";
 import "./Home.css";
 import PropTypes from "prop-types";
 import { CheckBox } from "@material-ui/icons";
+import { Link } from 'react-router-dom';
 
-const styles = (theme) => ({
+const styles1 = (theme) => ({
     card: {
         margin: theme.spacing.unit,
         width: 280,
@@ -18,8 +19,6 @@ const styles = (theme) => ({
 
 const Home = (props) => {
     const { classes } = props;
-    const [unReleasedMovies, setUnReleasedMovies] = useState([]);
-    const [releasedMovies, setReleasedMovies] = useState([]);
     const [moviename, setMoviename] = useState("");
     const [genres, setGenres] = useState([]);
     const [selectedGenres, setSelectedGenres] = useState([]);
@@ -28,25 +27,7 @@ const Home = (props) => {
     const [releaseStart, setReleaseStart] = useState(new Date());
     const [releaseEnd, setReleaseEnd] = useState(new Date());
 
-    useEffect(async () => {
-
-        await fetch(props.baseUrl + "movies/?page=1&limit=20", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Cache-Control": "no-cache",
-            },
-            body: null,
-        })
-            .then((response) => response.json())
-            .then((response) => {
-                setUnReleasedMovies(response.movies.filter(item => {
-                    return item.status === "PUBLISHED";
-                }));
-                setReleasedMovies(response.movies.filter(item => {
-                    return item.status === "RELEASED";
-                }));
-            });
+    async function fetchData() {
 
         await fetch(props.baseUrl + "genres", {
             method: "GET",
@@ -71,7 +52,8 @@ const Home = (props) => {
             .then((response) => {
                 setArtists(response.artists);
             });
-    }, []);
+    }
+    fetchData();
 
     const addSelectedGenres = event => {
         let newData = [...selectedGenres, event.target.value];
@@ -83,13 +65,19 @@ const Home = (props) => {
     }
     const applyButtonHandler = () => {
 
-        let result = releasedMovies.filter(item => {
+        let result = props.releasedMovies.filter(item => {
             return (moviename === "" || (moviename !== "" && item.title.toLowerCase().includes(moviename))) &&
                 (releaseEnd === "") &&
                 (releaseStart === "")
         });
 
-        setReleasedMovies(result);
+        props.setReleasedMovies(result);
+    }
+    function loadPoster(e, id) {
+        let data = props.releasedMovies.filter(item => {
+            return item.id === id;
+        });
+        props.setMovieDetail(data[0]);
     }
     return (
         <div className="home">
@@ -97,7 +85,7 @@ const Home = (props) => {
             <p className="sub-header">Upcoming Movies</p>
             <div className="grid-list-container">
                 <GridList className="grid-list" cols={6} style={{ flexWrap: "nowrap" }}>
-                    {unReleasedMovies.map(tile => (
+                    {props.unReleasedMovies.map(tile => (
                         <GridListTile key={tile.id} style={{ height: "250px !important" }}>
                             <img src={tile.poster_url} alt={tile.title} />
                             <GridListTileBar title={tile.title} className="title-bar" />
@@ -108,12 +96,12 @@ const Home = (props) => {
             <div className="home-body-container">
                 <div className="grid-movies-left">
                     <GridList className="grid-list-posters" cols={4}>
-                        {releasedMovies.map(tile => (
+                        {props.releasedMovies.map(tile => (
                             <GridListTile key={tile.id} className="poster-style">
-                                <a href={'/movie/' + tile.id}>
-                                    <img src={tile.poster_url} alt={tile.title} />
-                                    <GridListTileBar title={tile.title} subtitle={"Release Date:" + tile.release_date} className="title-bar" />
-                                </a>
+                                <Link to={"movie/" + tile.id} >
+                                    <img src={tile.poster_url} alt={tile.title} onClick={e => { loadPoster(e, tile.id) }} />
+                                    <GridListTileBar title={tile.title} subtitle={"Release Date:" + tile.release_date} className="title-bar" onClick={e => { loadPoster(e, tile.id) }} />
+                                </Link>
                             </GridListTile>
                         ))}
                     </GridList>
@@ -176,4 +164,4 @@ Home.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Home);
+export default withStyles(styles1)(Home);
