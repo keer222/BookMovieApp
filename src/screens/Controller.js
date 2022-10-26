@@ -7,14 +7,14 @@ import Confirmation from "../screens/confirmation/Confirmation";
 
 const Controller = () => {
   const baseUrl = "/api/v1/";
-
   const [unReleasedMovies, setUnReleasedMovies] = useState([]);
   const [releasedMovies, setReleasedMovies] = useState([]);
-
   const [movieDetail, setMovieDetail] = useState({});
   const [videoId, setVideoId] = useState({});
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [displayBookShowButton, setDisplayBookShowButton] = useState("none");
+  const [displayLogoutButton, setDisplayLogoutButton] = useState("none");
+  const [displayLoginButton, setDisplayLoginButton] = useState("block");
 
   useEffect(async () => {
     await fetch(baseUrl + "movies/?page=1&limit=20", {
@@ -33,14 +33,11 @@ const Controller = () => {
         setReleasedMovies(response.movies.filter(item => {
           return item.status === "RELEASED";
         }));
-        // setFilteredMovies(response.movies.filter(item => {
-        //   return item.status === "RELEASED";filteredMovies={filteredMovies} setFilteredMovies={setFilteredMovies}
-        // }));
       }).catch(e => {
         console.log(e);
       });
   }, []);
-  // loadData();
+
   return (
     <Router>
       <div className="main-container">
@@ -50,12 +47,16 @@ const Controller = () => {
           render={(props) => <Home {...props} releasedMovies={releasedMovies} unReleasedMovies={unReleasedMovies}
             movieDetail={movieDetail} setMovieDetail={setMovieDetail} videoId={videoId} setVideoId={setVideoId}
             isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} setDisplayBookShowButton={setDisplayBookShowButton}
-            displayBookShowButton={displayBookShowButton} baseUrl={baseUrl} />}
+            displayBookShowButton={displayBookShowButton} displayLogoutButton={displayLogoutButton}
+            setDisplayLogoutButton={setDisplayLogoutButton} displayLoginButton={displayLoginButton}
+            setDisplayLoginButton={setDisplayLoginButton} baseUrl={baseUrl} />}
         />
         <Route
           path="/movie/:id"
           render={(props) => <Details {...props} movieDetail={movieDetail} videoId={videoId}
-            displayBookShowButton={displayBookShowButton} baseUrl={baseUrl} />}
+            displayBookShowButton={displayBookShowButton} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}
+            displayLogoutButton={displayLogoutButton} setDisplayLogoutButton={setDisplayLogoutButton}
+            displayLoginButton={displayLoginButton} setDisplayLoginButton={setDisplayLoginButton} baseUrl={baseUrl} />}
         />
         <Route
           path="/bookshow/:id"

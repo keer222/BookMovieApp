@@ -38,7 +38,7 @@ const Details = (props) => {
 
     return (
         <div>
-            <Header {...props} />
+            <Header {...props} displayBookShowButton={"block"} displayLogoutButton={props.isLoggedIn ? "block" : "none"} displayLoginButton={props.isLoggedIn ? "none" : "block"} />
             <div className="details-container">
                 <Typography>
                     <Link to="/"><span className="back-home"> &#60; Back to Home</span></Link>
@@ -54,7 +54,7 @@ const Details = (props) => {
                     </Typography>
                     <Typography> <span style={{ fontWeight: "bold" }}>Genre:</span> {getGenre} </Typography>
                     <Typography> <span style={{ fontWeight: "bold" }}>Duration:</span> {movieDetail.duration} </Typography>
-                    <Typography> <span style={{ fontWeight: "bold" }}>Release Date:</span> {movieDetail.release_date} </Typography>
+                    <Typography> <span style={{ fontWeight: "bold" }}>Release Date:</span> {new Date(movieDetail.release_date).toString()} </Typography>
                     <Typography> <span style={{ fontWeight: "bold" }}>Rating:</span> {movieDetail.rating} </Typography>
                     <Typography style={{ marginTop: "16px" }}> <span style={{ fontWeight: "bold" }}> Plot:</span> <a href={movieDetail.wiki_url}>(Wiki Link)</a> {movieDetail.storyline}</Typography>
                     <Typography style={{ fontWeight: "bold", marginTop: "16px" }}> Trailer: </Typography>

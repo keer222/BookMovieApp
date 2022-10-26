@@ -26,8 +26,6 @@ const Header = (props) => {
     const [reqPassword, setReqPassword] = useState("dispNone");
     const [reqContactno, setReqContactno] = useState("dispNone");
     const [result, setResult] = useState("");
-    const [displayLoginButton, setDisplayLoginButton] = useState("block");
-    const [displayLogoutButton, setDisplayLogoutButton] = useState("none");
 
     const handleTabChange = (event, newTabIndex) => {
         setTabIndex(newTabIndex);
@@ -35,17 +33,18 @@ const Header = (props) => {
 
     const toggleLoginButton = (signIn) => {
         if (props.isLoggedIn || signIn) {
-            setDisplayLogoutButton("block");
-            setDisplayLoginButton("none");
+            props.setDisplayLogoutButton("block");
+            props.setDisplayLoginButton("none");
         } else {
-            setDisplayLogoutButton("none");
-            setDisplayLoginButton("block");
+            props.setDisplayLogoutButton("none");
+            props.setDisplayLoginButton("block");
         }
     }
 
     const logoutButtonHandler = () => {
-        setDisplayLogoutButton("none");
-        setDisplayLoginButton("block");
+        props.setIsLoggedIn(false);
+        props.setDisplayLogoutButton("none");
+        props.setDisplayLoginButton("block");
     }
     const bookShowButtonHandler = () => {
         props.history.push({
@@ -67,7 +66,6 @@ const Header = (props) => {
             props.setIsLoggedIn(true);
             toggleLoginButton(true);
         }
-
     }
     const registerButtonHandler = async () => {
         firstname === "" ? setReqFirstname("dispBlock") : setReqFirstname("dispNone");
@@ -110,7 +108,7 @@ const Header = (props) => {
             <Button className="Button-style"
                 variant="contained"
                 onClick={() => { setShowLoginModal(true) }}
-                color="default" style={{ display: displayLoginButton }}
+                color="default" style={{ display: props.displayLoginButton }}
             >LOGIN </Button>
             <ReactModal
                 isOpen={showLoginModal}
@@ -220,7 +218,7 @@ const Header = (props) => {
             <Button className="Button-style"
                 variant="contained"
                 onClick={logoutButtonHandler}
-                color="default" style={{ display: displayLogoutButton }}>LOGOUT
+                color="default" style={{ display: props.displayLogoutButton }}>LOGOUT
             </Button>
 
             <Button className="Button-style"

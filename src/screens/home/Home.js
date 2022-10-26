@@ -106,11 +106,10 @@ const Home = (props) => {
         let urlArray = data[0].trailer_url.split("=");
         if (urlArray.length === 2)
             props.setVideoId(urlArray[1]);
-        props.setDisplayBookShowButton("block");
     }
     return (
         <div className="home">
-            <Header {...props} />
+            <Header {...props} displayBookShowButton={"none"} displayLogoutButton={props.isLoggedIn ? "block" : "none"} displayLoginButton={props.isLoggedIn ? "none" : "block"} />
             <p className="sub-header">Upcoming Movies</p>
             <div className="grid-list-container">
                 <GridList className="grid-list" cols={6} style={{ flexWrap: "nowrap" }}>
