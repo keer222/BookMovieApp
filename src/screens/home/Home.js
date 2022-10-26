@@ -23,8 +23,8 @@ const Home = (props) => {
     const [selectedGenres, setSelectedGenres] = useState([]);
     const [artists, setArtists] = useState([]);
     const [selectedArtists, setSelectedArtists] = useState([]);
-    const [releaseStart, setReleaseStart] = useState(new Date());
-    const [releaseEnd, setReleaseEnd] = useState(new Date());
+    const [releaseStart, setReleaseStart] = useState("");
+    const [releaseEnd, setReleaseEnd] = useState("");
     const [state, dispatch] = useReducer(UpdateFilterOnMoviesList, { filteredMovies: props.releasedMovies });
 
     async function fetchData() {
@@ -62,23 +62,31 @@ const Home = (props) => {
         applyButtonHandler();
     }, [props.releasedMovies]);
 
-    const addSelectedGenres = event => {
-        let data = [{
-            "label": event.target.label,
-            "checked": true
-        }];
-        let newData = [...selectedGenres, data];
-        setSelectedGenres(newData);
-        event.target.label = true;
-    }
-    const addSelectedArtists = event => {
-        let newData = [...selectedArtists, event.target.value];
-        setSelectedArtists(newData);
-    }
     const applyButtonHandler = () => {
-        let result = props.releasedMovies.filter(item => {
-            return (moviename === "" || (item.title.includes(moviename)))
-        });
+        let result = props.releasedMovies;
+        if (moviename !== "") {
+            result = result.filter(item => {
+                return item.title.includes(moviename);
+            });
+        }
+        if (selectedGenres.length > 0) {
+            result = result.filter(item =>
+                selectedGenres.find(s => item.genres.toString().includes(s))
+            );
+        }
+        if (selectedArtists.length > 0) {
+            result = result.filter(item =>
+                item.artists.find(artist => selectedArtists.find(s => s.includes(artist.first_name + " " + artist.last_name)))
+            );
+        }
+        if (releaseEnd !== "" || releaseStart !== "") {
+            result = result.filter(item => {
+                let release = new Date(item.release_date).getTime();
+                let start = new Date(releaseStart).getTime();
+                let end = new Date(releaseEnd).getTime();
+                return (start === release || end === release || (start < release && end > release));
+            })
+        }
         dispatch({ "type": "UPDATE_MOVIE_FILTER", payload: result });
     }
 
@@ -121,7 +129,8 @@ const Home = (props) => {
                             <GridListTile key={tile.id} className="poster-style">
                                 <Link to={"movie/" + tile.id} >
                                     <img src={tile.poster_url} alt={tile.title} onClick={e => { loadPoster(e, tile.id) }} />
-                                    <GridListTileBar title={tile.title} subtitle={"Release Date:" + tile.release_date} className="title-bar" onClick={e => { loadPoster(e, tile.id) }} />
+                                    <GridListTileBar title={tile.title} subtitle={"Release Date:" + new Date(tile.release_date)} className="title-bar"
+                                        onClick={e => { loadPoster(e, tile.id) }} />
                                 </Link>
                             </GridListTile>
                         ))}
@@ -141,20 +150,22 @@ const Home = (props) => {
                         </FormControl><br /><br />
                         <FormControl className="formControl">
                             <InputLabel htmlFor="selectedGenres"> Genres </InputLabel>
-                            <Select multiple value={selectedGenres} renderValue={(selected) => selected} >
+                            <Select id="selectedGenres" multiple value={selectedGenres} renderValue={(selected) => selected.join(",")}
+                                onChange={e => { setSelectedGenres(e.target.value) }}>
                                 {genres.map((item) => (
                                     <MenuItem key={item.id} value={item.genre}>
-                                        <Checkbox label={item.genre} onChange={addSelectedGenres} />{item.genre}
+                                        <Checkbox label={item.genre} />{item.genre}
                                     </MenuItem>
                                 ))}
                             </Select>
                         </FormControl><br /><br />
                         <FormControl className="formControl">
                             <InputLabel htmlFor="selectedArtists"> Artists </InputLabel>
-                            <Select value={selectedArtists} onChange={addSelectedArtists}>
+                            <Select id="selectedArtists" multiple value={selectedArtists} renderValue={(selected) => selected.join(",")}
+                                onChange={e => { setSelectedArtists(e.target.value) }}>
                                 {artists.map((item) => (
-                                    <MenuItem key={item.id} value={item.first_name}>
-                                        <Checkbox checked={false} label={item.first_name} />{item.first_name + " " + item.last_name}
+                                    <MenuItem key={item.id} value={item.first_name + " " + item.last_name}>
+                                        <Checkbox label={item.first_name} />{item.first_name + " " + item.last_name}
                                     </MenuItem>
                                 ))}
                             </Select>
