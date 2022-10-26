@@ -1,11 +1,20 @@
+.details-container {
+    margin-left: 24px;
+}
+
 .back-home {
     cursor: pointer;
-    margin: 8px 0px 0px 24px;
+    margin: 8px 0px 0px 0px;
     height: 24px;
 }
 
-.details-container {
+.details-sub-container {
     width: 100%;
     display: grid;
     grid-template-columns: 20% 60% 20%;
+    margin-left: 24px;
+}
+
+StarBorderIcon {
+    font-size: normal;
 }

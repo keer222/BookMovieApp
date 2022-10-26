@@ -19,7 +19,7 @@ const Header = (props) => {
     const [regPassword, setRegPassword] = useState("");
     const [contactno, setContactno] = useState("");
     const [showLoginModal, setShowLoginModal] = useState(false);
-    const [showLogoutModal, setShowLogoutModal] = useState(false);
+    // const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [showBookShowModal, setShowBookShowModal] = useState(false);
     const [tabIndex, setTabIndex] = useState(0);
     const [reqFirstname, setReqFirstname] = useState("dispNone");
@@ -36,6 +36,16 @@ const Header = (props) => {
         setTabIndex(newTabIndex);
     };
 
+    const toggleLoginButton = (signIn) => {
+        if (props.isLoggedIn || signIn) {
+            setDisplayLogoutButton("block");
+            setDisplayLoginButton("none");
+        } else {
+            setDisplayLogoutButton("none");
+            setDisplayLoginButton("block");
+        }
+    }
+
     const loginButtonHandler = () => {
         setShowLoginModal(true);
     }
@@ -43,7 +53,7 @@ const Header = (props) => {
         setDisplayLogoutButton("none");
         setDisplayBookShowButton("none");
         setDisplayLoginButton("block");
-        setShowLogoutModal(true);
+        // setShowLogoutModal(true);
     }
     const bookShowButtonHandler = () => {
         setShowBookShowModal(true);
@@ -60,25 +70,46 @@ const Header = (props) => {
             return;
         else {
             setShowLoginModal(false);
-            setDisplayLogoutButton("block");
-            setDisplayLoginButton("none");
-            setDisplayBookShowButton("block");
+            props.setIsLoggedIn(true);
+            toggleLoginButton(true);
         }
 
     }
-    const registerButtonHandler = () => {
+    const registerButtonHandler = async () => {
         firstname === "" ? setReqFirstname("dispBlock") : setReqFirstname("dispNone");
         lastname === "" ? setReqLastname("dispBlock") : setReqLastname("dispNone");
         email === "" ? setReqEmail("dispBlock") : setReqEmail("dispNone");
         regPassword === "" ? setReqPassword("dispBlock") : setReqPassword("dispNone");
         contactno === "" ? setReqContactno("dispBlock") : setReqContactno("dispNone");
 
-        if (firstname === "" || lastname === "" || email === "" || password === "" || contactno === "") {
+        if (firstname === "" || lastname === "" || email === "" || regPassword === "" || contactno === "") {
             return;
         } else {
-            setResult("Registration Successful. Please Login!");
+            let data = {
+                "email_address": email,
+                "first_name": firstname,
+                "last_name": lastname,
+                "mobile_number": contactno,
+                "password": regPassword
+            };
+            await fetch(props.baseUrl + "signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache",
+                },
+                body: JSON.stringify(data),
+            }).then((response) => response.json())
+                .then((response) => {
+                    if (response.status === "ACTIVE")
+                        setResult("Registration Successful. Please Login!");
+                }).catch(e => {
+                    console.log(e);
+                    setResult("Registration Failed. Please retry!");
+                });
         }
     }
+
     return (
         <div className="Header">
             <img className="Logo" src={logo} alt="Logo" />
@@ -198,11 +229,11 @@ const Header = (props) => {
                 color="default" style={{ display: displayLogoutButton }}
             >LOGOUT
             </Button>
-            <ReactModal
+            {/* <ReactModal
                 isOpen={showLogoutModal}
                 ariaHideApp={false}
                 contentLabel="Logout Modal">
-            </ReactModal>
+            </ReactModal> */}
 
             <Button className="Button-style"
                 variant="contained"

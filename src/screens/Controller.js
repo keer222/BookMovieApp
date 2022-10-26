@@ -11,6 +11,8 @@ const Controller = () => {
   const [unReleasedMovies, setUnReleasedMovies] = useState([]);
   const [releasedMovies, setReleasedMovies] = useState([]);
   const [movieDetail, setMovieDetail] = useState({});
+  const [videoId, setVideoId] = useState({});
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   async function loadData() {
     await fetch(baseUrl + "movies/?page=1&limit=20", {
@@ -29,6 +31,8 @@ const Controller = () => {
         setReleasedMovies(response.movies.filter(item => {
           return item.status === "RELEASED";
         }));
+      }).catch(e => {
+        console.log(e);
       });
   }
   loadData();
@@ -38,11 +42,13 @@ const Controller = () => {
         <Route
           exact
           path="/"
-          render={(props) => <Home {...props} releasedMovies={releasedMovies} unReleasedMovies={unReleasedMovies} movieDetail={movieDetail} setMovieDetail={setMovieDetail} baseUrl={baseUrl} />}
+          render={(props) => <Home {...props} releasedMovies={releasedMovies} unReleasedMovies={unReleasedMovies}
+            movieDetail={movieDetail} setMovieDetail={setMovieDetail} videoId={videoId} setVideoId={setVideoId}
+            isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} baseUrl={baseUrl} />}
         />
         <Route
           path="/movie/:id"
-          render={(props) => <Details {...props} movieDetail={movieDetail} baseUrl={baseUrl} />}
+          render={(props) => <Details {...props} movieDetail={movieDetail} videoId={videoId} baseUrl={baseUrl} />}
         />
         <Route
           path="/bookshow/:id"

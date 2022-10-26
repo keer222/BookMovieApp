@@ -39,6 +39,8 @@ const Home = (props) => {
         }).then((response) => response.json())
             .then((response) => {
                 setGenres(response.genres);
+            }).catch(err => {
+                console.log(err);
             });
 
         await fetch(props.baseUrl + "artists?page=1&limit=30", {
@@ -51,6 +53,8 @@ const Home = (props) => {
         }).then((response) => response.json())
             .then((response) => {
                 setArtists(response.artists);
+            }).catch(err => {
+                console.log(err);
             });
     }
     fetchData();
@@ -78,10 +82,13 @@ const Home = (props) => {
             return item.id === id;
         });
         props.setMovieDetail(data[0]);
+        let urlArray = data[0].trailer_url.split("=");
+        if (urlArray.length === 2)
+            props.setVideoId(urlArray[1]);
     }
     return (
         <div className="home">
-            <Header />
+            <Header {...props} />
             <p className="sub-header">Upcoming Movies</p>
             <div className="grid-list-container">
                 <GridList className="grid-list" cols={6} style={{ flexWrap: "nowrap" }}>
