@@ -19,8 +19,6 @@ const Header = (props) => {
     const [regPassword, setRegPassword] = useState("");
     const [contactno, setContactno] = useState("");
     const [showLoginModal, setShowLoginModal] = useState(false);
-    // const [showLogoutModal, setShowLogoutModal] = useState(false);
-    const [showBookShowModal, setShowBookShowModal] = useState(false);
     const [tabIndex, setTabIndex] = useState(0);
     const [reqFirstname, setReqFirstname] = useState("dispNone");
     const [reqLastname, setReqLastname] = useState("dispNone");
@@ -30,7 +28,6 @@ const Header = (props) => {
     const [result, setResult] = useState("");
     const [displayLoginButton, setDisplayLoginButton] = useState("block");
     const [displayLogoutButton, setDisplayLogoutButton] = useState("none");
-    const [displayBookShowButton, setDisplayBookShowButton] = useState("none");
 
     const handleTabChange = (event, newTabIndex) => {
         setTabIndex(newTabIndex);
@@ -46,17 +43,14 @@ const Header = (props) => {
         }
     }
 
-    const loginButtonHandler = () => {
-        setShowLoginModal(true);
-    }
     const logoutButtonHandler = () => {
         setDisplayLogoutButton("none");
-        setDisplayBookShowButton("none");
         setDisplayLoginButton("block");
-        // setShowLogoutModal(true);
     }
     const bookShowButtonHandler = () => {
-        setShowBookShowModal(true);
+        props.history.push({
+            pathname: "/bookshow/" + props.match.params.id
+        });
     }
     const setUser = (event) => {
         setUsername(event.target.value);
@@ -115,7 +109,7 @@ const Header = (props) => {
             <img className="Logo" src={logo} alt="Logo" />
             <Button className="Button-style"
                 variant="contained"
-                onClick={loginButtonHandler}
+                onClick={() => { setShowLoginModal(true) }}
                 color="default" style={{ display: displayLoginButton }}
             >LOGIN </Button>
             <ReactModal
@@ -226,25 +220,14 @@ const Header = (props) => {
             <Button className="Button-style"
                 variant="contained"
                 onClick={logoutButtonHandler}
-                color="default" style={{ display: displayLogoutButton }}
-            >LOGOUT
+                color="default" style={{ display: displayLogoutButton }}>LOGOUT
             </Button>
-            {/* <ReactModal
-                isOpen={showLogoutModal}
-                ariaHideApp={false}
-                contentLabel="Logout Modal">
-            </ReactModal> */}
 
             <Button className="Button-style"
                 variant="contained"
                 onClick={bookShowButtonHandler}
-                color="primary" style={{ display: displayBookShowButton }}>BOOK SHOW
+                color="primary" style={{ display: props.displayBookShowButton }}>BOOK SHOW
             </Button>
-            <ReactModal
-                isOpen={showBookShowModal}
-                ariaHideApp={false}
-                contentLabel="Book Show Modal" >
-            </ReactModal>
         </div>
     )
 }

@@ -7,8 +7,9 @@ import YouTube from 'react-youtube';
 import StarBorderIcon from "@material-ui/icons/StarBorder";
 import { GridList, GridListTileBar, GridListTile } from "@material-ui/core";
 
-const Details = ({ movieDetail, videoId }) => {
-
+const Details = (props) => {
+    const movieDetail = props.movieDetail;
+    const videoId = props.videoId;
     const [ratingColor, setRatingColor] = useState(["black", "black", "black", "black", "black"]);
 
     const changeColor = (e, index) => {
@@ -37,7 +38,7 @@ const Details = ({ movieDetail, videoId }) => {
 
     return (
         <div>
-            <Header />
+            <Header {...props} />
             <div className="details-container">
                 <Typography>
                     <Link to="/"><span className="back-home"> &#60; Back to Home</span></Link>

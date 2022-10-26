@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Home from "../screens/home/Home";
 import Details from "../screens/details/Details";
 import { BrowserRouter as Router, Route } from "react-router-dom";
@@ -10,11 +10,13 @@ const Controller = () => {
 
   const [unReleasedMovies, setUnReleasedMovies] = useState([]);
   const [releasedMovies, setReleasedMovies] = useState([]);
+
   const [movieDetail, setMovieDetail] = useState({});
   const [videoId, setVideoId] = useState({});
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [displayBookShowButton, setDisplayBookShowButton] = useState("none");
 
-  async function loadData() {
+  useEffect(async () => {
     await fetch(baseUrl + "movies/?page=1&limit=20", {
       method: "GET",
       headers: {
@@ -31,11 +33,14 @@ const Controller = () => {
         setReleasedMovies(response.movies.filter(item => {
           return item.status === "RELEASED";
         }));
+        // setFilteredMovies(response.movies.filter(item => {
+        //   return item.status === "RELEASED";filteredMovies={filteredMovies} setFilteredMovies={setFilteredMovies}
+        // }));
       }).catch(e => {
         console.log(e);
       });
-  }
-  loadData();
+  }, []);
+  // loadData();
   return (
     <Router>
       <div className="main-container">
@@ -44,11 +49,13 @@ const Controller = () => {
           path="/"
           render={(props) => <Home {...props} releasedMovies={releasedMovies} unReleasedMovies={unReleasedMovies}
             movieDetail={movieDetail} setMovieDetail={setMovieDetail} videoId={videoId} setVideoId={setVideoId}
-            isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} baseUrl={baseUrl} />}
+            isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} setDisplayBookShowButton={setDisplayBookShowButton}
+            displayBookShowButton={displayBookShowButton} baseUrl={baseUrl} />}
         />
         <Route
           path="/movie/:id"
-          render={(props) => <Details {...props} movieDetail={movieDetail} videoId={videoId} baseUrl={baseUrl} />}
+          render={(props) => <Details {...props} movieDetail={movieDetail} videoId={videoId}
+            displayBookShowButton={displayBookShowButton} baseUrl={baseUrl} />}
         />
         <Route
           path="/bookshow/:id"

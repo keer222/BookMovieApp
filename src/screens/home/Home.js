@@ -1,9 +1,8 @@
-import { GridList, GridListTile, GridListTileBar, Card, MenuItem, FormControl, InputLabel, Input, Select, withStyles, Button, TextField, ListItemIcon } from "@material-ui/core";
-import React, { useState } from "react";
+import { GridList, GridListTile, GridListTileBar, Card, MenuItem, FormControl, InputLabel, Input, Select, withStyles, Button, TextField, Checkbox } from "@material-ui/core";
+import React, { useEffect, useReducer, useState } from "react";
 import Header from "../../common/header/Header";
 import "./Home.css";
 import PropTypes from "prop-types";
-import { CheckBox } from "@material-ui/icons";
 import { Link } from 'react-router-dom';
 
 const styles1 = (theme) => ({
@@ -26,6 +25,7 @@ const Home = (props) => {
     const [selectedArtists, setSelectedArtists] = useState([]);
     const [releaseStart, setReleaseStart] = useState(new Date());
     const [releaseEnd, setReleaseEnd] = useState(new Date());
+    const [state, dispatch] = useReducer(UpdateFilterOnMoviesList, { filteredMovies: props.releasedMovies });
 
     async function fetchData() {
 
@@ -58,25 +58,38 @@ const Home = (props) => {
             });
     }
     fetchData();
+    useEffect(() => {
+        applyButtonHandler();
+    }, [props.releasedMovies]);
 
     const addSelectedGenres = event => {
-        let newData = [...selectedGenres, event.target.value];
+        let data = [{
+            "label": event.target.label,
+            "checked": true
+        }];
+        let newData = [...selectedGenres, data];
         setSelectedGenres(newData);
+        event.target.label = true;
     }
     const addSelectedArtists = event => {
         let newData = [...selectedArtists, event.target.value];
         setSelectedArtists(newData);
     }
     const applyButtonHandler = () => {
-
         let result = props.releasedMovies.filter(item => {
-            return (moviename === "" || (moviename !== "" && item.title.toLowerCase().includes(moviename))) &&
-                (releaseEnd === "") &&
-                (releaseStart === "")
+            return (moviename === "" || (item.title.includes(moviename)))
         });
-
-        props.setReleasedMovies(result);
+        dispatch({ "type": "UPDATE_MOVIE_FILTER", payload: result });
     }
+
+    function UpdateFilterOnMoviesList(state, action) {
+        switch (action.type) {
+            case "UPDATE_MOVIE_FILTER":
+                return { ...state, filteredMovies: action.payload };
+            default: return state;
+        }
+    }
+
     function loadPoster(e, id) {
         let data = props.releasedMovies.filter(item => {
             return item.id === id;
@@ -85,6 +98,7 @@ const Home = (props) => {
         let urlArray = data[0].trailer_url.split("=");
         if (urlArray.length === 2)
             props.setVideoId(urlArray[1]);
+        props.setDisplayBookShowButton("block");
     }
     return (
         <div className="home">
@@ -103,7 +117,7 @@ const Home = (props) => {
             <div className="home-body-container">
                 <div className="grid-movies-left">
                     <GridList className="grid-list-posters" cols={4}>
-                        {props.releasedMovies.map(tile => (
+                        {state.filteredMovies.map(tile => (
                             <GridListTile key={tile.id} className="poster-style">
                                 <Link to={"movie/" + tile.id} >
                                     <img src={tile.poster_url} alt={tile.title} onClick={e => { loadPoster(e, tile.id) }} />
@@ -127,10 +141,10 @@ const Home = (props) => {
                         </FormControl><br /><br />
                         <FormControl className="formControl">
                             <InputLabel htmlFor="selectedGenres"> Genres </InputLabel>
-                            <Select multiple value={selectedGenres} renderValue={(selected) => selected.join(", ")} onChange={addSelectedGenres}>
+                            <Select multiple value={selectedGenres} renderValue={(selected) => selected} >
                                 {genres.map((item) => (
                                     <MenuItem key={item.id} value={item.genre}>
-                                        <ListItemIcon><CheckBox checked={selectedGenres.includes(item.id)} label={item.genre} />{item.genre}</ListItemIcon>
+                                        <Checkbox label={item.genre} onChange={addSelectedGenres} />{item.genre}
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -140,7 +154,7 @@ const Home = (props) => {
                             <Select value={selectedArtists} onChange={addSelectedArtists}>
                                 {artists.map((item) => (
                                     <MenuItem key={item.id} value={item.first_name}>
-                                        <CheckBox checked={false} label={item.first_name} />{item.first_name + " " + item.last_name}
+                                        <Checkbox checked={false} label={item.first_name} />{item.first_name + " " + item.last_name}
                                     </MenuItem>
                                 ))}
                             </Select>
