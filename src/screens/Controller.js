@@ -16,26 +16,29 @@ const Controller = () => {
   const [displayLogoutButton, setDisplayLogoutButton] = useState("none");
   const [displayLoginButton, setDisplayLoginButton] = useState("block");
 
-  useEffect(async () => {
-    await fetch(baseUrl + "movies/?page=1&limit=20", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-cache",
-      },
-      body: null,
-    })
-      .then((response) => response.json())
-      .then((response) => {
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const responseJson = await fetch(baseUrl + "movies/?page=1&limit=20", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
+          },
+          body: null,
+        });
+        const response = await responseJson.json();
         setUnReleasedMovies(response.movies.filter(item => {
           return item.status === "PUBLISHED";
         }));
         setReleasedMovies(response.movies.filter(item => {
           return item.status === "RELEASED";
         }));
-      }).catch(e => {
+      } catch (e) {
         console.log(e);
-      });
+      }
+    }
+    fetchData();
   }, []);
 
   return (
